@@ -1,3 +1,5 @@
+var timeId = null;
+
 function comecar(){
     var url = window.location.search;
     var nivel = url.replace("?", "");
@@ -17,10 +19,36 @@ function comecar(){
 
     document.getElementById('cronometro').innerHTML = tempo;
 
-    var qtdeBaloes = 10;
+    var qtdeBaloes = 80;
 
-    criarBaloes('qtdeBaloes');
+    criarBaloes(qtdeBaloes);
 
+    document.getElementById('baloesInteiros').innerHTML = qtdeBaloes;
+    document.getElementById('baloesEstourados').innerHTML = 0;
+
+    contagemTempo(tempo + 1);
+
+}
+
+function contagemTempo(segundos){
+
+    segundos -= 1;
+
+    if(segundos == -1){
+        clearTimeout(timerId);
+        gameOver();
+        return false;
+    }
+
+    document.getElementById('cronometro').innerHTML = segundos;
+
+    timerId = setTimeout("contagemTempo("+ segundos +")", 1000);
+
+}
+
+function gameOver(){
+    removerEventoBaloes();
+    alert('Game Over!');
 }
 
 function criarBaloes(qtdeBaloes){
@@ -28,9 +56,67 @@ function criarBaloes(qtdeBaloes){
     for(var i =1; i <= qtdeBaloes; i++){
 
         var balao = document.createElement("img");
-        balao.src = '../imagens/balao_azul_pegueno.png';
+        balao.src = './imagens/balao_azul_pequeno.png';
+        balao.style.margin = '10px';
+        balao.id = 'b' + i;
+        balao.onclick = function(){
+            estourar(this);
+        }
 
         document.getElementById('cenario').appendChild(balao);
+
+    }
+
+}
+
+function estourar(e){
+
+    var idBalao = e.id;
+
+    document.getElementById(idBalao).setAttribute("onclick", "");
+    document.getElementById(idBalao).src = './imagens/balao_azul_pequeno_estourado.png';
+    pontuacao(-1);
+
+}
+
+function pontuacao(acao){
+
+    var baloesInteiros = document.getElementById('baloesInteiros').innerHTML;
+    var baloesEstourados = document.getElementById('baloesEstourados').innerHTML;
+
+    baloesInteiros = parseInt(baloesInteiros);
+    baloesEstourados = parseInt(baloesEstourados);
+
+    baloesInteiros += acao;
+    baloesEstourados -= acao;
+
+    document.getElementById('baloesInteiros').innerHTML = baloesInteiros;
+    document.getElementById('baloesEstourados').innerHTML = baloesEstourados;
+
+    situacaoJogo(baloesInteiros);
+
+}
+
+function situacaoJogo(baloesInteiros){
+
+    if(baloesInteiros == 0){
+
+        alert('Viva! Você conseguiu!');
+        pararJogo();
+
+    }
+
+}
+
+function pararJogo(){
+    clearTimeout(timeId);
+}
+
+function removerEventoBaloes(){
+    var i = 1;
+    while(document.getElementById('b' + i)){
+        document.getElementById('b' + i).onclick = '';
+        i++;
 
     }
 
