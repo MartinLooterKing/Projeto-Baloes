@@ -59,7 +59,7 @@ function criarBaloes(qtdeBaloes){
         balao.src = './imagens/balao_azul_pequeno.png';
         balao.style.margin = '10px';
         balao.id = 'b' + i;
-        balao.onclick = function(){
+        balao.onmousedown = function(){
             estourar(this);
         }
 
@@ -73,7 +73,7 @@ function estourar(e){
 
     var idBalao = e.id;
 
-    document.getElementById(idBalao).setAttribute("onclick", "");
+    document.getElementById(idBalao).setAttribute("onmousedown", "");
     document.getElementById(idBalao).src = './imagens/balao_azul_pequeno_estourado.png';
     pontuacao(-1);
 
@@ -93,15 +93,16 @@ function pontuacao(acao){
     document.getElementById('baloesInteiros').innerHTML = baloesInteiros;
     document.getElementById('baloesEstourados').innerHTML = baloesEstourados;
 
-    situacaoJogo(baloesInteiros);
+    situacaoJogo(baloesInteiros, baloesEstourados);
 
 }
 
-function situacaoJogo(baloesInteiros){
+function situacaoJogo(baloesInteiros, baloesEstourados){
 
     if(baloesInteiros == 0){
 
-        alert('Viva! Você conseguiu!');
+        clearTimeout(timeId);
+        alert(`Viva! você conseguiu estourar todos os ${baloesEstourados} balões`);
         pararJogo();
 
     }
@@ -110,12 +111,13 @@ function situacaoJogo(baloesInteiros){
 
 function pararJogo(){
     clearTimeout(timeId);
+
 }
 
 function removerEventoBaloes(){
     var i = 1;
     while(document.getElementById('b' + i)){
-        document.getElementById('b' + i).onclick = '';
+        document.getElementById('b' + i).onmousedown = '';
         i++;
 
     }
